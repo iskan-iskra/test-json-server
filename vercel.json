@@ -9,8 +9,5 @@
   "routes": [
     { "src": "/api/todo", "dest": "server.js" },
     { "src": "/(.*)", "dest": "server.js" }
-  ],
-  "env": {
-    "DATABASE_URL": "@your-vercel-environment-variable"
-  }
+  ]
 }

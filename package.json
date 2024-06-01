@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+  },
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "dotenv": "^16.4.5",

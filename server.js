@@ -49,7 +49,7 @@ const swaggerOptions = {
 };
 
 const CSS_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.6.3/swagger-ui.min.css";
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.6.1/swagger-ui.min.css";
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use(

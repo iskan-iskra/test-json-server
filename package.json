@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",

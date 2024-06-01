@@ -11,6 +11,10 @@
   ],
   "routes": [
     {
+      "src": "/api-docs",
+      "dest": "/api-docs"
+    },
+    {
       "src": "/(.*)",
       "dest": "server.js"
     }

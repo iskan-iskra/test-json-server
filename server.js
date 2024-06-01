@@ -43,11 +43,11 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API for managing a todo list",
     },
-    servers: [
-      {
-        url: `https://localhost:${PORT}`,
-      },
-    ],
+    // servers: [
+    //   {
+    //     url: `https://localhost:${PORT}`,
+    //   },
+    // ],
   },
   apis: ["./server.js"],
 };

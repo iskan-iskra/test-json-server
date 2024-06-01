@@ -7,6 +7,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/api/test-connection", async (req, res) => {
+  try {
+    await prisma.$connect();
+    res.send("Database connection successful!");
+  } catch (error) {
+    res.status(500).send(`Database connection failed: ${error.message}`);
+  }
+});
+
 // Обработчик для получения списка задач
 app.get("/api/todos", async (req, res) => {
   const todos = await prisma.todo.findMany();

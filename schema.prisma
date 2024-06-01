@@ -12,10 +12,10 @@ datasource db {
 }
  
 model todo {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   title         String
   description   String
   dueDate       DateTime
-  completed     Boolean @deafault(false)
-  createdAt     DateTime @default(now())
+  completed     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
 }

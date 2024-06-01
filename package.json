@@ -2,7 +2,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "vercel-build": "prisma generate && prisma migrate deploy"
+    "vercel-build": "prisma generate && prisma migrate deploy && npm run build",
+    "build": "echo 'No build step required for this project'"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",

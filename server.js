@@ -45,11 +45,11 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: ["./server.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 /**
  * @swagger

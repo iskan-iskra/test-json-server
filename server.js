@@ -40,6 +40,7 @@ app.delete("/api/todos/:id", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+// Запуск сервера
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

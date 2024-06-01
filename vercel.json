@@ -3,16 +3,16 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node",
-      "header": {
-        "Access-Control-Allow-Origin": "*"
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "server.js",
+      "header": {
+        "Access-Control-Allow-Origin": "*"
+      }
     }
   ]
 }

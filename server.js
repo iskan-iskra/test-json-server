@@ -1,166 +1,80 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
-const swaggerUi = require("swagger-ui-express");
+const bodyParser = require("body-parser");
 const swaggerJsdoc = require("swagger-jsdoc");
-const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 
-// Создайте приложение express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all routes
-app.use(cors());
-
-app.use(bodyParser.json());
-
-// Подключитесь к MongoDB Atlas
-const dbURI =
-  "mongodb+srv://test:test@cluster0.wzjsmhv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-mongoose
-  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
-
-// Создайте схему и модель для задачи
-const todoSchema = new mongoose.Schema(
+// Подключение к MongoDB Atlas
+mongoose.connect(
+  "mongodb+srv://test:test@cluster0.wzjsmhv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
   {
-    title: { type: String, required: true },
-    description: { type: String, default: null },
-    dueDate: { type: Date, default: Date.now },
-    createdDate: { type: Date, default: Date.now },
-    completed: { type: Boolean, default: false },
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  }
+);
+
+const Todo = mongoose.model(
+  "Todo",
+  {
+    title: String,
+    description: String,
+    completed: Boolean,
+    createdAt: { type: Date, default: Date.now },
+    completedAt: Date,
   },
   { collection: "todo_v2" }
 );
 
-const Todo = mongoose.model("Todo", todoSchema);
+app.use(bodyParser.json());
 
-// Swagger setup
+// Swagger опции
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
       title: "Todo API",
       version: "1.0.0",
-      description: "API for managing a todo list",
+      description: "API for managing Todo items",
     },
-    // servers: [
-    //   {
-    //     url: `https://localhost:${PORT}`,
-    //   },
-    // ],
   },
-  apis: ["./server.js"],
+  apis: ["server.js"], // Файлы с описанием роутов API
 };
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 const CSS_URL =
   "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.6.1/swagger-ui.min.css";
 
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use(
-  "/swagger",
+  "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocs, { customCssUrl: CSS_URL })
+  swaggerUi.setup(swaggerSpec, {
+    customCssUrl: CSS_URL,
+  })
 );
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Todo:
- *       type: object
- *       required:
- *         - title
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the todo
- *         title:
- *           type: string
- *           description: The title of the todo
- *         description:
- *           type: string
- *           description: The description of the todo
- *         dueDate:
- *           type: string
- *           format: date
- *           description: The due date of the todo
- *         createdDate:
- *           type: string
- *           format: date
- *           description: The date the todo was created
- *         completed:
- *           type: boolean
- *           description: The status of the todo
- */
-
-/**
- * @swagger
- * tags:
- *   name: Todos
- *   description: The todo managing API
- */
-
+// Роуты для операций с Todo
 /**
  * @swagger
  * /todos:
  *   get:
- *     summary: Returns the list of all the todos
- *     tags: [Todos]
+ *     summary: Получить список всех Todo
  *     responses:
- *       200:
- *         description: The list of the todos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Todo'
+ *       '200':
+ *         description: Успешный запрос. Возвращает список всех Todo.
+ *       '500':
+ *         description: Ошибка сервера. Не удалось получить список Todo.
  */
 app.get("/todos", async (req, res) => {
   try {
     const todos = await Todo.find();
     res.json(todos);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-/**
- * @swagger
- * /todos/{id}:
- *   get:
- *     summary: Get the todo by id
- *     tags: [Todos]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The todo id
- *     responses:
- *       200:
- *         description: The todo description by id
- *         contents:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Todo'
- *       404:
- *         description: The todo was not found
- */
-app.get("/todos/:id", async (req, res) => {
-  try {
-    const todo = await Todo.findById(req.params.id);
-    if (todo) {
-      res.json(todo);
-    } else {
-      res.status(404).json({ message: "Todo not found" });
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch todos" });
   }
 });
 
@@ -168,36 +82,33 @@ app.get("/todos/:id", async (req, res) => {
  * @swagger
  * /todos:
  *   post:
- *     summary: Create a new todo
- *     tags: [Todos]
+ *     summary: Создать новую Todo
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Todo'
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               completed:
+ *                 type: boolean
  *     responses:
- *       201:
- *         description: The todo was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Todo'
- *       500:
- *         description: Some server error
+ *       '201':
+ *         description: Успешное создание. Возвращает созданную Todo.
+ *       '500':
+ *         description: Ошибка сервера. Не удалось создать Todo.
  */
 app.post("/todos", async (req, res) => {
-  const todo = new Todo({
-    title: req.body.title,
-    description: req.body.description,
-    dueDate: req.body.dueDate,
-  });
-
   try {
-    const newTodo = await todo.save();
-    res.status(201).json(newTodo);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const todo = new Todo(req.body);
+    await todo.save();
+    res.status(201).json(todo);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create todo" });
   }
 });
 
@@ -205,49 +116,39 @@ app.post("/todos", async (req, res) => {
  * @swagger
  * /todos/{id}:
  *   put:
- *     summary: Update the todo by the id
- *     tags: [Todos]
+ *     summary: Обновить существующую Todo по ID
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The todo id
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Todo'
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               completed:
+ *                 type: boolean
  *     responses:
- *       200:
- *         description: The todo was updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Todo'
- *       404:
- *         description: The todo was not found
- *       500:
- *         description: Some error happened
+ *       '200':
+ *         description: Успешное обновление. Возвращает обновленную Todo.
+ *       '500':
+ *         description: Ошибка сервера. Не удалось обновить Todo.
  */
 app.put("/todos/:id", async (req, res) => {
   try {
-    const todo = await Todo.findById(req.params.id);
-    if (todo) {
-      todo.title = req.body.title;
-      todo.description = req.body.description;
-      todo.dueDate = req.body.dueDate;
-      todo.completed = req.body.completed;
-
-      const updatedTodo = await todo.save();
-      res.json(updatedTodo);
-    } else {
-      res.status(404).json({ message: "Todo not found" });
-    }
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const { id } = req.params;
+    const todo = await Todo.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(todo);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update todo" });
   }
 });
 
@@ -255,37 +156,30 @@ app.put("/todos/:id", async (req, res) => {
  * @swagger
  * /todos/{id}:
  *   delete:
- *     summary: Remove the todo by id
- *     tags: [Todos]
+ *     summary: Удалить существующую Todo по ID
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The todo id
  *     responses:
- *       204:
- *         description: The todo was deleted
- *       404:
- *         description: The todo was not found
+ *       '204':
+ *         description: Успешное удаление. Не возвращает контент.
+ *       '500':
+ *         description: Ошибка сервера. Не удалось удалить Todo.
  */
 app.delete("/todos/:id", async (req, res) => {
   try {
-    const todo = await Todo.findById(req.params.id);
-    if (todo) {
-      await todo.remove();
-      res.status(204).send();
-    } else {
-      res.status(404).json({ message: "Todo not found" });
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const { id } = req.params;
+    await Todo.findByIdAndDelete(id);
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete todo" });
   }
 });
 
+// Запуск сервера
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-module.exports = app;

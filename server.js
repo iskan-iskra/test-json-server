@@ -4,10 +4,14 @@ const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
+const cors = require("cors");
 
 // Создайте приложение express
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(bodyParser.json());
 

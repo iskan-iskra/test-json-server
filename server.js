@@ -24,13 +24,16 @@ mongoose
   .catch((err) => console.log(err));
 
 // Создайте схему и модель для задачи
-const todoSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: String,
-  dueDate: Date,
-  createdDate: { type: Date, default: Date.now },
-  completed: { type: Boolean, default: false },
-});
+const todoSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, default: null },
+    dueDate: { type: Date, default: Date.now },
+    createdDate: { type: Date, default: Date.now },
+    completed: { type: Boolean, default: false },
+  },
+  { collection: "todo_v2" }
+);
 
 const Todo = mongoose.model("Todo", todoSchema);
 

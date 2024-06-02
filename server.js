@@ -17,14 +17,14 @@ app.get("/api/test-connection", async (req, res) => {
 
 // Обработчик для получения списка задач
 app.get("/api/todos", async (req, res) => {
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.Todo.findMany();
   res.json(todos);
 });
 
 // Обработчик для создания новой задачи
 app.post("/api/todos", async (req, res) => {
   const { title, description, completed, dueDate } = req.body;
-  const todo = await prisma.todo.create({
+  const todo = await prisma.Todo.create({
     data: {
       title,
       description,
@@ -38,7 +38,7 @@ app.post("/api/todos", async (req, res) => {
 // Обработчик для удаления задачи
 app.delete("/api/todos/:id", async (req, res) => {
   const { id } = req.params;
-  const todo = await prisma.todo.delete({
+  const todo = await prisma.Todo.delete({
     where: {
       id: parseInt(id),
     },

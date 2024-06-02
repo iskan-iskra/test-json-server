@@ -1,9 +1,7 @@
 {
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "build": "npx prisma generate && prisma db push",
-    "prisma:generate": "prisma generate"
+    "start": "npx prisma generate && prisma db push && node server.js"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",

@@ -19,7 +19,11 @@ app.get("/api/test-connection", async (req, res) => {
 
 // Обработчик для получения списка задач
 app.get("/api/todo", async (req, res) => {
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.todo.findMany({
+    orderBy: {
+      createdAt: "asc", // 'asc' для сортировки по возрастанию, 'desc' для сортировки по убыванию
+    },
+  });
   res.json(todos);
 });
 

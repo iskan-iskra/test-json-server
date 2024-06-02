@@ -18,13 +18,13 @@ app.get("/api/test-connection", async (req, res) => {
 });
 
 // Обработчик для получения списка задач
-app.get("/api/todos", async (req, res) => {
+app.get("/api/todo", async (req, res) => {
   const todos = await prisma.todo.findMany();
   res.json(todos);
 });
 
 // Обработчик для создания новой задачи
-app.post("/api/todos", async (req, res) => {
+app.post("/api/todo", async (req, res) => {
   const { title, description, completed, dueDate } = req.body;
   const todo = await prisma.todo.create({
     data: {
@@ -37,8 +37,24 @@ app.post("/api/todos", async (req, res) => {
   res.json(todo);
 });
 
+// Обработчик для обновления задачи
+app.patch("/api/todo/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, description, completed, dueDate } = req.body;
+  const todo = await prisma.todo.update({
+    where: { id: parseInt(id) },
+    data: {
+      ...(title !== undefined && { title }),
+      ...(completed !== undefined && { completed }),
+      ...(description !== undefined && { description }),
+      ...(dueDate !== undefined && { dueDate }),
+    },
+  });
+  res.json(todo);
+});
+
 // Обработчик для удаления задачи
-app.delete("/api/todos/:id", async (req, res) => {
+app.delete("/api/todo/:id", async (req, res) => {
   const { id } = req.params;
   const todo = await prisma.todo.delete({
     where: {

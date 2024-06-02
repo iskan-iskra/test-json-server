@@ -1,5 +1,5 @@
 const express = require("express");
-import prisma from "./lib/prisma.js";
+import prisma from "../lib/prisma.js";
 
 const app = express();
 

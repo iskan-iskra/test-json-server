@@ -2,7 +2,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "vercel-build": "prisma generate && prisma migrate deploy",
+    "vercel-build": "npx prisma generate && prisma migrate deploy",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 {
   "main": "server.js",
   "scripts": {
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && prisma migrate deploy",
     "start": "prisma generate && prisma db push && node api/index.js"
   },
   "dependencies": {

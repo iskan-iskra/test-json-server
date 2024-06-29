@@ -2,7 +2,7 @@
   "main": "server.js",
   "scripts": {
     "postinstall": "prisma generate && prisma migrate deploy",
-    "start": "prisma generate && prisma db push && node api/index.js"
+    "start": "prisma generate && prisma migrate deploy && prisma db push && node api/index.js"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",
